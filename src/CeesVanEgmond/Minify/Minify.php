@@ -15,7 +15,7 @@ class Minify {
      *
      * @access protected
      */
-	protected $files;
+    protected $files;
 
     /**
      * $buildpath
@@ -24,7 +24,7 @@ class Minify {
      *
      * @access protected
      */
-	protected $buildpath;
+    protected $buildpath;
 
     /**
      * $path
@@ -33,103 +33,103 @@ class Minify {
      *
      * @access protected
      */
-	protected $path;
+    protected $path;
 
     /**
      * minifyCss
-     * 
+     *
      * @param mixed $files Description.
      *
      * @access public
      * @return mixed Value.
      */
-	public function minifyCss($files)
-	{
-		$this->files = $files;
-		$this->path = public_path() . Config::get('minify::css_path');		
-		$this->buildpath = $this->path . Config::get('minify::css_build_path');
-		
-		$this->createBuildPath();	
-				
-		$totalmod = $this->doFilesExistReturnModified();
+    public function minifyCss($files)
+    {
+        $this->files = $files;
+        $this->path = public_path() . Config::get('minify::css_path');
+        $this->buildpath = $this->path . Config::get('minify::css_build_path');
 
-		$filename = md5(str_replace('.css', '', implode('-', $this->files)) . '-' . $totalmod).'.css';
-		$output = $this->buildpath . $filename;
+        $this->createBuildPath();
 
-		if ( file_exists($output) ) {
-			return $this->absoluteToRelative($output);
-		}
+        $totalmod = $this->doFilesExistReturnModified();
 
-		$all = $this->appendAllFiles();	
-		$result = CssMin::minify($all);		
+        $filename = md5(str_replace('.css', '', implode('-', $this->files)) . '-' . $totalmod).'.css';
+        $output = $this->buildpath . $filename;
 
-		file_put_contents($output, $result);
+        if ( file_exists($output) ) {
+            return $this->absoluteToRelative($output);
+        }
 
-		return $this->absoluteToRelative($output);
-	}
+        $all = $this->appendAllFiles();
+        $result = CssMin::minify($all);
 
-  	/**
+        file_put_contents($output, $result);
+
+        return $this->absoluteToRelative($output);
+    }
+
+    /**
      * minifyJs
-     * 
+     *
      * @param mixed $files Description.
      *
      * @access public
      * @return mixed Value.
      */
-	public function minifyJs($files)
-	{
-		$this->files = $files;
-		$this->path = public_path() . Config::get('minify::js_path');		
-		$this->buildpath = $this->path . Config::get('minify::js_build_path');
+    public function minifyJs($files)
+    {
+        $this->files = $files;
+        $this->path = public_path() . Config::get('minify::js_path');
+        $this->buildpath = $this->path . Config::get('minify::js_build_path');
 
-		$this->createBuildPath();	
-				
-		$totalmod = $this->doFilesExistReturnModified();
+        $this->createBuildPath();
 
-		$filename = md5(str_replace('.js', '', implode('-', $this->files)) . '-' . $totalmod).'.js';
-		$output = $this->buildpath . $filename;
+        $totalmod = $this->doFilesExistReturnModified();
 
-		if ( file_exists($output) ) {
-			return $this->absoluteToRelative($output);
-		}
-		
-		$all = $this->appendAllFiles();	
-		$result = JSMin::minify($all);		
+        $filename = md5(str_replace('.js', '', implode('-', $this->files)) . '-' . $totalmod).'.js';
+        $output = $this->buildpath . $filename;
 
-		file_put_contents($output, $result);
+        if ( file_exists($output) ) {
+            return $this->absoluteToRelative($output);
+        }
 
-		return $this->absoluteToRelative($output);
-	}
+        $all = $this->appendAllFiles();
+        $result = JSMin::minify($all);
+
+        file_put_contents($output, $result);
+
+        return $this->absoluteToRelative($output);
+    }
 
     /**
      * createBuildPath
-     * 
+     *
      * @access private
      * @return mixed Value.
      */
-	private function createBuildPath()
-	{		
-		if ( ! File::isDirectory($this->buildpath) ) {
-			File::makeDirectory($this->buildpath);
-		}
-	}
+    private function createBuildPath()
+    {
+        if ( ! File::isDirectory($this->buildpath) ) {
+            File::makeDirectory($this->buildpath);
+        }
+    }
 
     /**
      * absoluteToRelative
-     * 
+     *
      * @param mixed $url Description.
      *
      * @access private
      * @return mixed Value.
      */
-	private function absoluteToRelative($url)
-	{
-		return '//' . $this->remove_http(\URL::asset(str_replace(public_path(), '', $url)));
-	}
+    private function absoluteToRelative($url)
+    {
+        return \URL::asset(str_replace(public_path(), '', $url));
+    }
 
     /**
      * remove_http
-     * 
+     *
      * @param mixed $url Description.
      *
      * @access private
@@ -147,47 +147,47 @@ class Minify {
 
     /**
      * appendAllFiles
-     * 
+     *
      * @access private
      * @return mixed Value.
      */
-	private function appendAllFiles()
-	{		
-		$all = '';
-		foreach ($this->files as $file)
-			$all .= File::get($this->path . $file);
+    private function appendAllFiles()
+    {
+        $all = '';
+        foreach ($this->files as $file)
+            $all .= File::get($this->path . $file);
 
-		if ( ! $all ) {
-			throw new Exception;
-		}
+        if ( ! $all ) {
+            throw new Exception;
+        }
 
-		return $all;
-	}
+        return $all;
+    }
     /**
      * doFilesExistReturnModified
-     * 
+     *
      * @access private
      * @return mixed Value.
      */
-	private function doFilesExistReturnModified()
-	{
-		if (!is_array($this->files))
-			$this->files = array($this->files);
-	
-		$filetime = 0;
-				
-		foreach ($this->files as $file) {
-			$absolutefile = $this->path . $file;
+    private function doFilesExistReturnModified()
+    {
+        if (!is_array($this->files))
+            $this->files = array($this->files);
 
-			if ( ! File::exists($absolutefile)) {			
-				throw new Exception;
-			}
+        $filetime = 0;
 
-			$filetime += File::lastModified($absolutefile);
+        foreach ($this->files as $file) {
+            $absolutefile = $this->path . $file;
 
-		}
+            if ( ! File::exists($absolutefile)) {
+                throw new Exception;
+            }
 
-		return $filetime;
-	}
+            $filetime += File::lastModified($absolutefile);
+
+        }
+
+        return $filetime;
+    }
 
 }
